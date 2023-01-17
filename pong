@@ -1,0 +1,103 @@
+#include<iostream>
+using namespace std;
+
+
+#include "SFML/Graphics.hpp"
+
+int main() {
+
+    //game set up (you'll need these two lines in every game)
+    sf::RenderWindow renderWindow(sf::VideoMode(500, 500), "Pong Paddle"); //set up screen
+    sf::Event event; //set up event queue
+
+    //paddle1 set up
+    sf::RectangleShape paddle1(sf::Vector2f(10.0f, 100.0f));
+    paddle1.setFillColor(sf::Color::Blue); //other colors: https://www.sfml-dev.org/documentation/2.5.1/classsf_1_1Color.php
+    paddle1.setPosition(0.0f, 250.0f); //set position: this is where the top left corner will be
+   
+    sf::RectangleShape paddle2(sf::Vector2f(10.0f, 100.0f));
+    paddle2.setFillColor(sf::Color::Red); //other colors: https://www.sfml-dev.org/documentation/2.5.1/classsf_1_1Color.php
+    paddle2.setPosition(490.0f, 250.0f); //set position: this is where the top left corner will be
+    //ball set up
+    float ballx = 250;
+    float bally = 250;
+    float xvel = .20;
+    float yvel = .11;
+    
+    sf::CircleShape ball(10);
+    ball.setFillColor(sf::Color(rand()%255, rand() % 255, rand() % 255));
+    ball.setPosition(200, 200);
+    ball.setPosition(ballx, bally);
+
+    //################### HOLD ONTO YOUR BUTTS, ITS THE GAME LOOP###############################################################
+    while (renderWindow.isOpen()) {//keep window open until user shuts it down
+        while (renderWindow.pollEvent(event)) { //look for events
+
+            //this checks if the user has clicked the little "x" button in the top right corner
+            if (event.type == sf::Event::EventType::Closed)
+                renderWindow.close();
+
+            //KEYBOARD INPUT (just one key to start
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) { //checks if "W" is pressed
+                paddle1.move(0, -5); //move the rectangle 5 pixels UP on the y axis
+                cout << "rectangle moving up" << endl; //for Mo's testing, you can take this out
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) { //checks if "W" is pressed
+                paddle1.move(0, 5); //move the rectangle 5 pixels UP on the y axis
+                cout << "rectangle moving down" << endl; //for Mo's testing, you can take this out
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) { //checks if "W" is pressed
+                paddle2.move(0, -5); //move the rectangle 5 pixels UP on the y axis
+                cout << "rectangle moving up" << endl; //for Mo's testing, you can take this out
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) { //checks if "W" is pressed
+                paddle2.move(0, 5); //move the rectangle 5 pixels UP on the y axis
+                cout << "rectangle moving down" << endl; //for Mo's testing, you can take this out
+            }
+        }
+        //paddle collison
+        if (ballx - 30 < paddle1.getPosition().x && bally > paddle1.getPosition().y && bally < paddle1.getPosition().y + 100) {
+            cout << "paddle1 collison!" << endl;
+            ball.setFillColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
+        
+            yvel *= -1;
+
+        if (bally - 30 < paddle2.getPosition().x && ballx > paddle2.getPosition().y && ballx < paddle2.getPosition().y + 100) 
+            cout << "paddle2 collison!" << endl;
+            xvel *= -1;
+            ball.setFillColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
+
+        }
+        // physics section
+        if (ballx < 0 || ballx > 500) {
+            xvel *= -1;
+            ball.setFillColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
+        }
+        if (bally < 0 || bally > 500) {
+            yvel *= -1;
+            ball.setFillColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
+        }
+        
+        if (ballx < 500 || ballx < 0) {
+            xvel *= -1;
+            ball.setFillColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
+        }
+        if (bally < 500 || bally < 200) {
+            yvel *= -1;
+            ball.setFillColor(sf::Color(rand() % 255, rand() % 255, rand() % 255));
+        }
+        ballx += xvel;
+        bally += yvel;
+        ball.setPosition(ballx, bally);
+        //render section-----------------------------------------
+        //renderWindow.clear(); //wipes screen, without this things smear
+        
+        renderWindow.draw(paddle1); //you gotta drew each object
+        renderWindow.draw(paddle2); //you gotta drew each object
+        renderWindow.draw(ball); //you gotta drew each object
+        renderWindow.display(); //flips memory drawings onto screen
+
+    }//######################## end game loop ###################################################################################
+
+    cout << "goodbye!" << endl;
+} //end game
